@@ -51,6 +51,7 @@ app = Flask(
     static_folder=os.path.join(BASE_DIR, "static"),
     template_folder=os.path.join(BASE_DIR, "templates"),
 )
+app.url_map.strict_slashes = False
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "trinetra-cyber-protection-key-2026")
 app.config["JSON_SORT_KEYS"] = False
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0

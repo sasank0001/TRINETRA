@@ -12,21 +12,33 @@ from app import app as flask_app
 class VercelPathMiddleware:
     """
     WSGI middleware for Vercel Serverless Functions.
-    Restores the original requested URL path from Vercel's rewrite headers
-    (such as HTTP_X_MATCHED_PATH) so Flask routes correctly instead of seeing /api/index.
+    Restores the original requested URL path (/scanner, /dashboard, /history, /about)
+    from Vercel's proxy/rewrite headers so subroutes and tabs render properly
+    instead of collapsing back to the root handler.
     """
 
     def __init__(self, wsgi_app):
         self.wsgi_app = wsgi_app
 
     def __call__(self, environ, start_response):
-        matched_path = environ.get("HTTP_X_MATCHED_PATH")
-        if matched_path:
-            environ["PATH_INFO"] = matched_path
-        elif environ.get("PATH_INFO", "").startswith("/api/index"):
-            sub = environ["PATH_INFO"][len("/api/index"):]
-            environ["PATH_INFO"] = sub if sub else "/"
-
+        path = environ.get("PATH_INFO", "")
+        # If Vercel rewrote the path to the internal serverless entrypoint
+        if path in ("/api/index", "/api/index.py", "/api", "/api/"):
+            # Inspect all headers Vercel may populate with the real incoming route
+            for header in (
+                "HTTP_X_FORWARDED_URI",
+                "HTTP_X_FORWARDED_PATH",
+                "HTTP_X_MATCHED_PATH",
+                "HTTP_X_VERCEL_FORWARDED_PATH",
+                "HTTP_X_REAL_PATH",
+            ):
+                val = environ.get(header)
+                if val and not val.startswith("/api"):
+                    # Strip any query parameters from path_info
+                    environ["PATH_INFO"] = val.split("?")[0]
+                    break
+            else:
+                environ["PATH_INFO"] = "/"
         return self.wsgi_app(environ, start_response)
 
 
