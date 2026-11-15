@@ -2,11 +2,7 @@
   "version": 2,
   "functions": {
     "api/index.py": {
-      "includeFiles": [
-        "model/**",
-        "templates/**",
-        "static/**"
-      ]
+      "includeFiles": "{model/**,templates/**,static/**}"
     }
   },
   "rewrites": [
