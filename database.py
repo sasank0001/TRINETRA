@@ -19,7 +19,36 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.environ.get("TRINETRA_DB_PATH", os.path.join(BASE_DIR, "instance", "trinetra.db"))
+
+
+def _resolve_db_path() -> str:
+    """
+    Resolve database path with fallback for serverless read-only environments (e.g. Vercel, AWS Lambda).
+    """
+    env_path = os.environ.get("TRINETRA_DB_PATH")
+    if env_path:
+        return env_path
+
+    # If running on Vercel or other serverless platforms, default directly to /tmp
+    if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+        return "/tmp/trinetra.db"
+
+    default_dir = os.path.join(BASE_DIR, "instance")
+    try:
+        os.makedirs(default_dir, exist_ok=True)
+        # Test write permission
+        test_file = os.path.join(default_dir, ".write_test")
+        with open(test_file, "w") as f:
+            f.write("ok")
+        if os.path.exists(test_file):
+            os.remove(test_file)
+        return os.path.join(default_dir, "trinetra.db")
+    except (OSError, IOError, PermissionError):
+        # Fallback to /tmp on read-only filesystem
+        return "/tmp/trinetra.db"
+
+
+DB_PATH = _resolve_db_path()
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS scans (
