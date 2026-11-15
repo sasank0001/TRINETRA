@@ -217,7 +217,7 @@ def _draw_page_decorations(canvas_obj: canvas.Canvas, doc: SimpleDocTemplate):
     canvas_obj.setFont("Helvetica-Bold", 6.5)
     canvas_obj.setFillColor(HexColor("#4B5563"))
     canvas_obj.drawString(36, page_h - 18, "TRINETHRA // AUTOMATED THREAT INTELLIGENCE & CYBER AUDIT")
-    canvas_obj.drawRightString(page_w - 36, page_h - 18, "CONFIDENTIAL &bull; FOR AUTHORIZED USE ONLY")
+    canvas_obj.drawRightString(page_w - 36, page_h - 18, "CONFIDENTIAL \u2022 FOR AUTHORIZED USE ONLY")
 
     # 3. Running Bottom Footer Bar
     canvas_obj.setStrokeColor(HexColor("#E5E7EB"))
@@ -262,7 +262,8 @@ def generate_pdf_report(scan_data: dict) -> bytes:
     slate = HexColor("#374151")
     text_muted = HexColor("#6B7280")
     border_color = HexColor("#E5E7EB")
-    card_bg = HexColor("#F9FAFB")
+    # Translucent label-cell shading so the background watermark stays visible
+    card_bg = _make_color("#374151", alpha=0.035)
 
     # Typography styles
     title_style = ParagraphStyle(
@@ -355,15 +356,15 @@ def generate_pdf_report(scan_data: dict) -> bytes:
 
     if risk_lvl == "HIGH":
         verdict_color = maroon
-        verdict_bg = HexColor("#FBECEF")
+        verdict_bg = _make_color("#7A263A", alpha=0.09)
         badge_text = "CRITICAL THREAT &bull; PHISHING DETECTED"
     elif risk_lvl == "MEDIUM":
         verdict_color = amber
-        verdict_bg = HexColor("#FEF3C7")
+        verdict_bg = _make_color("#F59E0B", alpha=0.18)
         badge_text = "ELEVATED RISK &bull; SUSPICIOUS PATTERNS"
     else:
         verdict_color = teal
-        verdict_bg = HexColor("#EBF4F3")
+        verdict_bg = _make_color("#527C78", alpha=0.11)
         badge_text = "LOW RISK &bull; LEGITIMATE INFRASTRUCTURE"
 
     v_cell_score = Paragraph(
