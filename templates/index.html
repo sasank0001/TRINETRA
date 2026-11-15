@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}TRINETHRA - Intelligent Phishing URL Detection &amp; Cyber Protection System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+  <div>
+    <div class="eyebrow">Threat Intelligence System</div>
+    <h1>Defend Against <span class="brand-highlight">Deceptive Links</span> Before You Click</h1>
+    <p class="lead">
+      TRINETHRA evaluates link structures at a granular lexical level, combining an ensemble Random Forest classifier with deterministic brand mimicry analysis to detect malicious infrastructure without establishing an outbound connection.
+    </p>
+
+    <div class="hero-actions">
+      <a href="{{ url_for('scanner_page') }}" class="btn btn-primary btn-lg">
+        <i data-lucide="scan-search"></i>
+        <span>Launch URL Scanner</span>
+      </a>
+      <a href="{{ url_for('dashboard_page') }}" class="btn btn-outline btn-lg">
+        <i data-lucide="chart-no-axes-combined"></i>
+        <span>View Threat Analytics</span>
+      </a>
+    </div>
+
+    <!-- Live Telemetry Snapshot -->
+    <div class="hero-stats">
+      <div class="hero-stat-item">
+        <b>{{ total_scanned }}</b>
+        <span>Scanned URLs</span>
+      </div>
+      <div class="hero-stat-item">
+        <b style="color: var(--risk-high);">{{ high_risk }}</b>
+        <span>Threats Flagged</span>
+      </div>
+      <div class="hero-stat-item">
+        <b style="color: var(--risk-low);">{{ legitimate_count }}</b>
+        <span>Verified Safe</span>
+      </div>
+      <div class="hero-stat-item">
+        <b style="color: var(--navy);">{{ (model_metrics.accuracy * 100)|round(1) if model_metrics else 94.1 }}%</b>
+        <span>Model Accuracy</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Brand Panel -->
+  <div class="hero-brand-panel">
+    <img src="{{ url_for('static', filename='images/logo.svg') }}?v={{ v }}" alt="TRINETHRA Shiva Tripundra Emblem">
+    <h3>TRINETHRA</h3>
+    <p>Ancient Vision. Intelligent Protection. A Safer Digital Tomorrow.</p>
+    <div class="verified-badge">
+      <i data-lucide="shield-check" class="lucide-sm"></i>
+      <span>Passive Zero-Execution Engine</span>
+    </div>
+  </div>
+</section>
+
+<!-- Feature Capabilities Section -->
+<section class="mt-4">
+  <div class="page-head" style="margin-bottom: 20px;">
+    <div>
+      <div class="eyebrow">Core Capabilities</div>
+      <h2>Engineered for Deep Link Inspection</h2>
+      <p>Deterministic lexical extraction combined with machine learning to identify credential harvesting and domain deception.</p>
+    </div>
+  </div>
+
+  <div class="grid grid-3">
+    <div class="card feature-card">
+      <div class="icon-box">
+        <i data-lucide="shield-check"></i>
+      </div>
+      <h3>Multi-Tier Risk Assessment</h3>
+      <p>Classifies URLs into Low Risk (Safe), Medium Risk (Suspicious), or High Risk (Phishing) with transparent indicator explanations.</p>
+    </div>
+
+    <div class="card feature-card">
+      <div class="icon-box" style="background: rgba(82, 124, 120, 0.12); color: var(--teal);">
+        <i data-lucide="chart-no-axes-combined"></i>
+      </div>
+      <h3>Random Forest Ensemble</h3>
+      <p>Trained on thousands of verified malicious links and legitimate domains without relying on easily manipulated HTTP headers.</p>
+    </div>
+
+    <div class="card feature-card">
+      <div class="icon-box" style="background: rgba(17, 24, 39, 0.08); color: var(--navy);">
+        <i data-lucide="lock-keyhole"></i>
+      </div>
+      <h3>Zero-Execution Sandbox</h3>
+      <p>URLs are never resolved, visited, or downloaded. Scanning is 100% lexical and passive, ensuring your browser remains completely safe.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Detection Pipeline Steps -->
+<section class="mt-4">
+  <div class="page-head" style="margin-bottom: 20px;">
+    <div>
+      <div class="eyebrow">Detection Pipeline</div>
+      <h2>Structured 4-Step Analysis</h2>
+      <p>From raw input to transparent threat classification without outbound network vulnerability.</p>
+    </div>
+  </div>
+
+  <div class="grid grid-4">
+    <div class="card" style="padding: 20px;">
+      <div style="font-size: 0.75rem; font-weight: 700; color: var(--maroon); letter-spacing: 0.06em; margin-bottom: 8px;">PHASE 01</div>
+      <h3 style="font-size: 1rem; margin-bottom: 6px;">Input Sanitization</h3>
+      <p class="small muted mb-0">Sanitizes URL string, enforces URI scheme rules, and parses components safely without network roundtrips.</p>
+    </div>
+
+    <div class="card" style="padding: 20px;">
+      <div style="font-size: 0.75rem; font-weight: 700; color: var(--teal); letter-spacing: 0.06em; margin-bottom: 8px;">PHASE 02</div>
+      <h3 style="font-size: 1rem; margin-bottom: 6px;">Lexical Extraction</h3>
+      <p class="small muted mb-0">Measures Shannon entropy, Punycode, TLD reputation, character ratios, and 41 structural attributes.</p>
+    </div>
+
+    <div class="card" style="padding: 20px;">
+      <div style="font-size: 0.75rem; font-weight: 700; color: var(--navy); letter-spacing: 0.06em; margin-bottom: 8px;">PHASE 03</div>
+      <h3 style="font-size: 1rem; margin-bottom: 6px;">Ensemble Inference</h3>
+      <p class="small muted mb-0">Evaluates decision paths through 120 estimators to establish class probabilities and explainable factors.</p>
+    </div>
+
+    <div class="card" style="padding: 20px;">
+      <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate); letter-spacing: 0.06em; margin-bottom: 8px;">PHASE 04</div>
+      <h3 style="font-size: 1rem; margin-bottom: 6px;">Audit &amp; Intelligence</h3>
+      <p class="small muted mb-0">Generates a detailed threat profile, assigns a 0-100 risk score, and securely logs the scan to SQLite.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

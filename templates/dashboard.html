@@ -1,0 +1,401 @@
+{% extends "base.html" %}
+
+{% block title %}Threat Analytics Dashboard - TRINETHRA{% endblock %}
+
+{% block extra_head %}
+<!-- Local Chart.js library -->
+<script src="{{ url_for('static', filename='js/vendor/chart.umd.min.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="eyebrow">Enterprise Telemetry &amp; Insights</div>
+    <h1>Security Analytics Dashboard</h1>
+    <p>Live threat metrics, domain telemetry, machine learning evaluation benchmarks, and historical patterns.</p>
+  </div>
+  <div>
+    <a href="{{ url_for('scanner_page') }}" class="btn btn-primary">
+      <i data-lucide="scan-search"></i>
+      <span>Scan New URL</span>
+    </a>
+  </div>
+</div>
+
+<!-- Stat Counters (Row 1) -->
+<div class="grid grid-4">
+  <div class="stat-card accent-navy">
+    <div class="stat-label">
+      <span>Total URLs Scanned</span>
+      <i data-lucide="database" class="lucide-sm"></i>
+    </div>
+    <div class="stat-value">{{ stats.total }}</div>
+    <div class="stat-sub">Stored in local audit database</div>
+  </div>
+
+  <div class="stat-card accent-teal">
+    <div class="stat-label">
+      <span>Legitimate URLs</span>
+      <i data-lucide="shield-check" class="lucide-sm" style="color: var(--teal);"></i>
+    </div>
+    <div class="stat-value" style="color: var(--teal);">{{ stats.legitimate }}</div>
+    <div class="stat-sub">
+      {% if stats.total > 0 %}
+        {{ ((stats.legitimate / stats.total) * 100)|round(1) }}% verified safe
+      {% else %}
+        0% of total
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="stat-card accent-amber">
+    <div class="stat-label">
+      <span>Suspicious Links</span>
+      <i data-lucide="triangle-alert" class="lucide-sm" style="color: var(--risk-med);"></i>
+    </div>
+    <div class="stat-value" style="color: var(--risk-med);">{{ stats.suspicious }}</div>
+    <div class="stat-sub">
+      {% if stats.total > 0 %}
+        {{ ((stats.suspicious / stats.total) * 100)|round(1) }}% elevated risk
+      {% else %}
+        0% of total
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="stat-card accent-maroon">
+    <div class="stat-label">
+      <span>Phishing Detected</span>
+      <i data-lucide="shield-alert" class="lucide-sm" style="color: var(--maroon);"></i>
+    </div>
+    <div class="stat-value" style="color: var(--maroon);">{{ stats.phishing }}</div>
+    <div class="stat-sub">
+      <b>{{ stats.phishing_percentage }}%</b> overall detection rate
+    </div>
+  </div>
+</div>
+
+<!-- Secondary Telemetry Counters -->
+<div class="grid grid-3 mt-3">
+  <div class="card">
+    <div class="card-title">
+      <h3>
+        <i data-lucide="shield-alert"></i>
+        <span>Typosquatting &amp; Imitation</span>
+      </h3>
+      <span class="badge HIGH">{{ stats.typosquatting_detected }} Flagged</span>
+    </div>
+    <p class="small muted mb-0">Impersonation of monitored entities (Google, PayPal, Apple, Amazon) detected via homoglyphs.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <h3>
+        <i data-lucide="history"></i>
+        <span>Newly Registered Domains</span>
+      </h3>
+      <span class="badge MEDIUM">{{ stats.newly_registered_domains }} Flagged</span>
+    </div>
+    <p class="small muted mb-0">Domains registered under 90 days ago identified through passive WHOIS lookups.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <h3>
+        <i data-lucide="network"></i>
+        <span>Redirect Chains</span>
+      </h3>
+      <span class="badge plain">{{ stats.redirect_chains_detected }} Tracked</span>
+    </div>
+    <p class="small muted mb-0">Shortener services and multi-hop HTTP redirections analyzed safely in sandbox.</p>
+  </div>
+</div>
+
+<!-- Charts Section -->
+<div class="grid grid-2 mt-3">
+  <!-- 14-Day Timeline Chart -->
+  <div class="chart-box">
+    <h3>
+      <i data-lucide="chart-no-axes-combined"></i>
+      <span>Daily Scanning Activity (14 Days)</span>
+    </h3>
+    <div style="height: 260px; position: relative;">
+      <canvas id="timelineChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Distribution Donut Chart -->
+  <div class="chart-box">
+    <h3>
+      <i data-lucide="pie-chart"></i>
+      <span>Risk Classification Ratio</span>
+    </h3>
+    <div style="height: 260px; position: relative;">
+      <canvas id="donutChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Pattern Analysis & Model Benchmark -->
+<div class="grid grid-2 mt-3">
+  <!-- Top Suspicious Patterns -->
+  <div class="card">
+    <div class="card-title">
+      <h3>
+        <i data-lucide="list-filter"></i>
+        <span>Frequently Detected Threat Patterns</span>
+      </h3>
+      <span class="badge plain">Heuristics</span>
+    </div>
+    {% if stats.top_patterns and stats.top_patterns|length > 0 %}
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Detected Pattern / Heuristic</th>
+            <th style="text-align: right;">Occurrences</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pat in stats.top_patterns %}
+          <tr>
+            <td><code>{{ pat.pattern }}</code></td>
+            <td style="text-align: right; font-weight: 600;">{{ pat.count }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="muted small mb-0">No recurrent threat patterns identified yet in the local database.</p>
+    {% endif %}
+  </div>
+
+  <!-- Model Benchmark Card -->
+  <div class="card">
+    <div class="card-title">
+      <h3>
+        <i data-lucide="cpu"></i>
+        <span>Random Forest Classifier Benchmark</span>
+      </h3>
+      <span class="badge plain">Test Split</span>
+    </div>
+
+    {% if metrics %}
+    <div class="grid grid-4" style="gap: 10px; margin-bottom: 16px;">
+      <div style="background: var(--bg-ivory); padding: 12px; border-radius: var(--radius-sm); text-align: center;">
+        <div style="font-size: 1.25rem; font-weight: 700; color: var(--navy);">{{ (metrics.accuracy * 100)|round(1) }}%</div>
+        <div class="small muted">Accuracy</div>
+      </div>
+      <div style="background: var(--bg-ivory); padding: 12px; border-radius: var(--radius-sm); text-align: center;">
+        <div style="font-size: 1.25rem; font-weight: 700; color: var(--navy);">{{ (metrics.precision * 100)|round(1) }}%</div>
+        <div class="small muted">Precision</div>
+      </div>
+      <div style="background: var(--bg-ivory); padding: 12px; border-radius: var(--radius-sm); text-align: center;">
+        <div style="font-size: 1.25rem; font-weight: 700; color: var(--navy);">{{ (metrics.recall * 100)|round(1) }}%</div>
+        <div class="small muted">Recall</div>
+      </div>
+      <div style="background: var(--bg-ivory); padding: 12px; border-radius: var(--radius-sm); text-align: center;">
+        <div style="font-size: 1.25rem; font-weight: 700; color: var(--navy);">{{ (metrics.f1_score * 100)|round(1) }}%</div>
+        <div class="small muted">F1-Score</div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size: 0.775rem; font-weight: 600; color: var(--slate-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;">
+        Confusion Matrix (Unseen Test Set N = {{ metrics.test_samples }})
+      </div>
+      <div class="table-wrap">
+        <table class="data" style="text-align: center;">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Actual \ Predicted</th>
+              <th style="text-align: center;">Predicted Safe</th>
+              <th style="text-align: center;">Predicted Phishing</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align: left; font-weight: 600;">Actual: Safe</td>
+              <td style="color: var(--teal); font-weight: 700;">{{ metrics.confusion_matrix.tn }} <span class="small muted">(TN)</span></td>
+              <td style="color: var(--maroon); font-weight: 700;">{{ metrics.confusion_matrix.fp }} <span class="small muted">(FP)</span></td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 600;">Actual: Phishing</td>
+              <td style="color: var(--maroon); font-weight: 700;">{{ metrics.confusion_matrix.fn }} <span class="small muted">(FN)</span></td>
+              <td style="color: var(--teal); font-weight: 700;">{{ metrics.confusion_matrix.tp }} <span class="small muted">(TP)</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Recent Scans Table Preview -->
+<div class="card mt-3">
+  <div class="card-title">
+    <h3>
+      <i data-lucide="history"></i>
+      <span>Recent Scanning Activity</span>
+    </h3>
+    <a href="{{ url_for('history_page') }}" class="btn btn-outline btn-sm">
+      <span>View Full Registry</span>
+      <i data-lucide="arrow-right" class="lucide-sm"></i>
+    </a>
+  </div>
+
+  {% if stats.recent %}
+  <div class="table-wrap">
+    <table class="data">
+      <thead>
+        <tr>
+          <th>Scanned URL</th>
+          <th>Domain</th>
+          <th>Verdict</th>
+          <th>Risk Score</th>
+          <th>Timestamp</th>
+          <th style="text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in stats.recent %}
+        <tr>
+          <td><span class="url-cell" title="{{ row.url }}">{{ row.url }}</span></td>
+          <td><code>{{ row.domain or 'N/A' }}</code></td>
+          <td><span class="badge {{ row.risk_level }}">{{ row.risk_level }}</span></td>
+          <td><b>{{ row.risk_score }}</b><span class="muted small">/100</span></td>
+          <td class="muted small">{{ row.scanned_at|replace('T', ' ') }}</td>
+          <td style="text-align: right;">
+            <a href="{{ url_for('download_scan_report', scan_id=row.id) }}" class="btn btn-outline btn-sm" target="_blank">
+              <i data-lucide="file-text" class="lucide-sm"></i>
+              <span>PDF</span>
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted small mb-0">No scan activity recorded yet.</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Embedded Telemetry Data (safe JSON parse) -->
+<script id="dashboardTelemetryData" type="application/json">
+  {
+    "daily": {{ stats.daily|tojson }},
+    "low": {{ stats.low|tojson }},
+    "medium": {{ stats.medium|tojson }},
+    "high": {{ stats.high|tojson }}
+  }
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const telemetryEl = document.getElementById("dashboardTelemetryData");
+  const telemetry = telemetryEl ? JSON.parse(telemetryEl.textContent) : {};
+  const dailyData = telemetry.daily || { labels: [], LOW: [], MEDIUM: [], HIGH: [] };
+  const lowCount = Number(telemetry.low || 0);
+  const medCount = Number(telemetry.medium || 0);
+  const highCount = Number(telemetry.high || 0);
+
+  // Professional Brand Colors
+  const colorTeal = "#527C78";    // Muted Teal (Safe)
+  const colorAmber = "#B45309";   // Warm Amber (Medium)
+  const colorMaroon = "#7A263A";  // Traditional Maroon (Phishing)
+  const gridColor = "#E5E7EB";
+  const textColor = "#4B5563";
+
+  // 1. Timeline Activity Chart
+  const ctxTimeline = document.getElementById("timelineChart");
+  if (ctxTimeline && window.Chart) {
+    new Chart(ctxTimeline, {
+      type: "line",
+      data: {
+        labels: dailyData.labels.map(l => l.slice(5)),
+        datasets: [
+          {
+            label: "Safe (Low)",
+            data: dailyData.LOW,
+            borderColor: colorTeal,
+            backgroundColor: "rgba(82, 124, 120, 0.08)",
+            tension: 0.15,
+            fill: true,
+            pointRadius: 3,
+            borderWidth: 2,
+          },
+          {
+            label: "Suspicious (Med)",
+            data: dailyData.MEDIUM,
+            borderColor: colorAmber,
+            backgroundColor: "rgba(180, 83, 9, 0.08)",
+            tension: 0.15,
+            fill: true,
+            pointRadius: 3,
+            borderWidth: 2,
+          },
+          {
+            label: "Phishing (High)",
+            data: dailyData.HIGH,
+            borderColor: colorMaroon,
+            backgroundColor: "rgba(122, 38, 58, 0.08)",
+            tension: 0.15,
+            fill: true,
+            pointRadius: 3,
+            borderWidth: 2,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "top", labels: { color: textColor, boxWidth: 12, font: { family: "Inter", size: 11, weight: "500" } } }
+        },
+        scales: {
+          x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 11 } } },
+          y: {
+            grid: { color: gridColor },
+            ticks: { color: textColor, stepSize: 1, font: { size: 11 } },
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+
+  // 2. Risk Distribution Donut Chart
+  const ctxDonut = document.getElementById("donutChart");
+  if (ctxDonut && window.Chart) {
+    const total = lowCount + medCount + highCount;
+    new Chart(ctxDonut, {
+      type: "doughnut",
+      data: {
+        labels: ["Safe (0–30)", "Suspicious (31–60)", "Phishing (61–100)"],
+        datasets: [{
+          data: total > 0 ? [lowCount, medCount, highCount] : [1, 0, 0],
+          backgroundColor: total > 0
+            ? [colorTeal, colorAmber, colorMaroon]
+            : ["#E5E7EB", "transparent", "transparent"],
+          borderColor: "#FFFFFF",
+          borderWidth: 2,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "70%",
+        plugins: {
+          legend: { position: "bottom", labels: { color: textColor, boxWidth: 12, font: { family: "Inter", size: 11, weight: "500" } } }
+        }
+      }
+    });
+  }
+});
+</script>
+{% endblock %}

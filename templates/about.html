@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}System Architecture &amp; Methodology - TRINETHRA{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="eyebrow">Technical Documentation &amp; Overview</div>
+    <h1>About TRINETHRA</h1>
+    <p>Intelligent Phishing URL Detection and Autonomous Threat Assessment System.</p>
+  </div>
+</div>
+
+<!-- Project Overview & Motivation -->
+<div class="card">
+  <div class="card-title">
+    <h3>
+      <i data-lucide="shield-alert"></i>
+      <span>Project Overview &amp; Motivation</span>
+    </h3>
+    <span class="badge plain">Threat Intelligence</span>
+  </div>
+  <p>
+    Phishing remains the preeminent vector for unauthorized account compromise, credential harvesting, and enterprise infrastructure breaches. Attackers systematically exploit deceptive domain naming conventions, homoglyph characters, subdomain nesting, and obfuscated paths to masquerade as credible banking and enterprise institutions.
+  </p>
+  <p>
+    <b>TRINETHRA</b> is engineered to provide pre-execution cyber defense. By applying pure <i>lexical feature extraction</i> coupled with an ensemble Random Forest machine learning classifier, TRINETHRA evaluates the intrinsic structure of a URL to deliver rapid, explainable risk verdicts without ever establishing an outbound HTTP connection to the destination host.
+  </p>
+
+  <h4 style="font-size: 0.95rem; margin-top: 20px; margin-bottom: 12px; color: var(--navy);">Primary Engineering Objectives:</h4>
+  <div class="grid grid-2" style="gap: 12px;">
+    <div style="display: flex; gap: 10px; align-items: flex-start;">
+      <i data-lucide="scan-search" class="lucide-sm" style="color: var(--maroon); margin-top: 3px;"></i>
+      <div class="small"><b>Deterministic Lexical Extraction:</b> Evaluates 41 structural URL features without DNS resolution or network roundtrips.</div>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: flex-start;">
+      <i data-lucide="cpu" class="lucide-sm" style="color: var(--teal); margin-top: 3px;"></i>
+      <div class="small"><b>High-Accuracy Machine Learning:</b> Detects zero-day deceptive links using an ensemble of 120 Random Forest decision trees (94%+ accuracy).</div>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: flex-start;">
+      <i data-lucide="file-text" class="lucide-sm" style="color: var(--navy); margin-top: 3px;"></i>
+      <div class="small"><b>Explainable AI (XAI) Scoring:</b> Provides transparent, human-readable indicator explanations rather than an opaque black-box verdict.</div>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: flex-start;">
+      <i data-lucide="lock-keyhole" class="lucide-sm" style="color: var(--teal); margin-top: 3px;"></i>
+      <div class="small"><b>Passive Zero-Execution Sandbox:</b> Guarantees zero risk of client-side drive-by malware execution or outbound server beaconing.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Brand Identity & Philosophy -->
+<div class="card mt-3">
+  <div class="card-title">
+    <h3>
+      <i data-lucide="eye"></i>
+      <span>Brand Identity: The Philosophy of TRINETHRA</span>
+    </h3>
+    <span class="badge plain">Cultural Heritage &amp; Modern Science</span>
+  </div>
+  <div style="display: grid; grid-template-columns: 80px 1fr; gap: 24px; align-items: center;">
+    <div style="background: var(--navy); padding: 14px; border-radius: var(--radius); text-align: center;">
+      <img src="{{ url_for('static', filename='images/logo.svg') }}?v={{ v }}" alt="TRINETHRA Shiva Tripundra Emblem" style="width: 52px; height: 52px; display: block; margin: 0 auto;">
+    </div>
+    <div>
+      <p style="margin-bottom: 6px;">
+        <b>Trinethra (त्रिनेत्र)</b> derives from the ancient Sanskrit concept of the <i>Three-Eyed Vision</i> — representing supreme perception, intuitive vigilance, and the ability to look beyond surface illusions to see ultimate truth.
+      </p>
+      <p class="muted small mb-0">
+        In cybersecurity, deceptive phishing links disguise themselves beneath authentic-looking brand names and valid SSL certificates. The TRINETHRA emblem incorporates the vertical third eye intersecting the classical <i>Tripundra</i> (three horizontal Namam lines), symbolizing constant vigilance, analytical foresight, and modern cryptographic protection.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Technology Stack & Architecture -->
+<div class="card mt-3">
+  <div class="card-title">
+    <h3>
+      <i data-lucide="layers"></i>
+      <span>Technology Stack &amp; Software Components</span>
+    </h3>
+  </div>
+
+  <div class="grid grid-4" style="gap: 12px;">
+    <div style="background: var(--bg-ivory); padding: 14px; border-radius: var(--radius-sm);">
+      <b style="color: var(--navy); display: block; font-size: 0.95rem;">Python 3.x</b>
+      <span class="small muted">Core Backend &amp; Extraction</span>
+    </div>
+    <div style="background: var(--bg-ivory); padding: 14px; border-radius: var(--radius-sm);">
+      <b style="color: var(--navy); display: block; font-size: 0.95rem;">Flask 3.x</b>
+      <span class="small muted">Web Application &amp; API Server</span>
+    </div>
+    <div style="background: var(--bg-ivory); padding: 14px; border-radius: var(--radius-sm);">
+      <b style="color: var(--navy); display: block; font-size: 0.95rem;">Scikit-Learn</b>
+      <span class="small muted">Random Forest ML Ensemble</span>
+    </div>
+    <div style="background: var(--bg-ivory); padding: 14px; border-radius: var(--radius-sm);">
+      <b style="color: var(--navy); display: block; font-size: 0.95rem;">ReportLab</b>
+      <span class="small muted">Vector PDF Security Reports</span>
+    </div>
+    <div style="background: var(--bg-ivory); padding: 14px; border-radius: var(--radius-sm);">
+      <b style="color: var(--navy); display: block; font-size: 0.95rem;">SQLite 3</b>
+      <span class="small muted">Local Audit Database</span>
+    </div>
+    <div style="background: var(--bg-ivory); padding: 14px; border-radius: var(--radius-sm);">
+      <b style="color: var(--navy); display: block; font-size: 0.95rem;">Chart.js 4</b>
+      <span class="small muted">Enterprise Telemetry Charts</span>
+    </div>
+    <div style="background: var(--bg-ivory); padding: 14px; border-radius: var(--radius-sm);">
+      <b style="color: var(--navy); display: block; font-size: 0.95rem;">Lucide Icons</b>
+      <span class="small muted">Clean Vector Icon Family</span>
+    </div>
+    <div style="background: var(--bg-ivory); padding: 14px; border-radius: var(--radius-sm);">
+      <b style="color: var(--navy); display: block; font-size: 0.95rem;">Joblib</b>
+      <span class="small muted">Model Artifact Serialization</span>
+    </div>
+  </div>
+</div>
+
+<!-- Machine Learning Methodology & Academic Credits -->
+<div class="card mt-3">
+  <div class="card-title">
+    <h3>
+      <i data-lucide="cpu"></i>
+      <span>Machine Learning Methodology &amp; Dataset</span>
+    </h3>
+    <span class="badge plain">Research Standard</span>
+  </div>
+
+  <p>
+    The predictive pipeline uses a <b>Random Forest Classifier</b> composed of 120 decision trees. The training corpus aggregates verified phishing records from the <i>PhiUSIIL Phishing URL Dataset (UCI Machine Learning Repository #967)</i>, curated research phishing corpora, and benign web domains from the <i>Tranco Top 1M</i> authority.
+  </p>
+
+  <h4 style="font-size: 0.925rem; margin-top: 14px; margin-bottom: 8px;">Evaluation Benchmarks (Unseen 20% Test Split):</h4>
+  {% if metrics %}
+  <div class="grid grid-4" style="gap: 10px; margin-bottom: 16px;">
+    <div style="background: var(--bg-ivory); padding: 12px; border-radius: var(--radius-sm); text-align: center;">
+      <div style="font-size: 1.25rem; font-weight: 700; color: var(--navy);">{{ (metrics.accuracy * 100)|round(2) }}%</div>
+      <div class="small muted">Accuracy</div>
+    </div>
+    <div style="background: var(--bg-ivory); padding: 12px; border-radius: var(--radius-sm); text-align: center;">
+      <div style="font-size: 1.25rem; font-weight: 700; color: var(--navy);">{{ (metrics.precision * 100)|round(2) }}%</div>
+      <div class="small muted">Precision</div>
+    </div>
+    <div style="background: var(--bg-ivory); padding: 12px; border-radius: var(--radius-sm); text-align: center;">
+      <div style="font-size: 1.25rem; font-weight: 700; color: var(--navy);">{{ (metrics.recall * 100)|round(2) }}%</div>
+      <div class="small muted">Recall</div>
+    </div>
+    <div style="background: var(--bg-ivory); padding: 12px; border-radius: var(--radius-sm); text-align: center;">
+      <div style="font-size: 1.25rem; font-weight: 700; color: var(--navy);">{{ (metrics.f1_score * 100)|round(2) }}%</div>
+      <div class="small muted">F1-Score</div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div style="background: #F3F4F6; padding: 12px 16px; border-radius: var(--radius-sm); border-left: 3px solid var(--teal); font-size: 0.8125rem; color: var(--slate); margin-top: 16px;">
+    <b>Academic Integrity Note:</b> Evaluation metrics displayed above are authentic computations performed on an unseen test dataset split. The identical 41-feature extraction vector is executed during both training and live inference.
+  </div>
+</div>
+
+<!-- Formal Project Credits -->
+<div class="card mt-3" style="text-align: center; border: 1px solid var(--border-strong);">
+  <h3 style="margin-bottom: 6px;">Project Attribution &amp; Credits</h3>
+  <p class="muted small" style="max-width: 600px; margin: 0 auto 12px;">
+    Submitted as part of the curriculum requirements for Bachelor of Technology / Engineering evaluations in Computer Science and Information Technology.
+  </p>
+  <div style="font-size: 1.1rem; font-weight: 700; color: var(--maroon);">
+    Developed by CSE and IT Students – S7
+  </div>
+  <p class="small muted" style="margin-top: 4px; margin-bottom: 0;">
+    Ancient Vision. Intelligent Protection. A Safer Digital Tomorrow.
+  </p>
+</div>
+{% endblock %}

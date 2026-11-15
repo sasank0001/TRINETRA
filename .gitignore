@@ -1,0 +1,37 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pytest_cache/
+
+# Environment Variables & Secrets
+.env
+.env.local
+
+# Database & runtime instances
+instance/*.sqlite3
+instance/*.db
+instance/*.sqlite
+*.sqlite3
+*.db
+
+# Logs
+*.log
+
+# Large Raw Datasets (Archive & raw files > 20MB)
+dataset/raw/
+dataset/tranco/
+dataset/*.zip
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

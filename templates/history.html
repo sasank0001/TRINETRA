@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Scan History &amp; Audit Log - TRINETHRA{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="eyebrow">Audit &amp; Compliance Logs</div>
+    <h1>URL Scan History</h1>
+    <p>Complete historical registry of scanned links, AI classification verdicts, and security telemetry.</p>
+  </div>
+  <div style="display: flex; gap: 10px;">
+    {% if total > 0 %}
+    <button id="clearHistoryBtn" class="btn btn-outline btn-sm" style="color: var(--maroon); border-color: var(--border-strong);">
+      <i data-lucide="trash-2" class="lucide-sm"></i>
+      <span>Clear History</span>
+    </button>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Search & Filter Toolbar -->
+<div class="card toolbar" style="padding: 16px;">
+  <form method="GET" action="{{ url_for('history_page') }}" style="display: flex; gap: 12px; width: 100%; flex-wrap: wrap; align-items: center;">
+    <div class="input-wrap" style="flex: 1; min-width: 240px;">
+      <i data-lucide="search"></i>
+      <input
+        type="text"
+        name="q"
+        class="input"
+        placeholder="Filter by URL or domain keyword..."
+        value="{{ search }}"
+      />
+    </div>
+
+    <select name="risk" class="select" onchange="this.form.submit()">
+      <option value="">All Risk Tiers</option>
+      <option value="LOW" {% if risk_filter == 'LOW' %}selected{% endif %}>LOW RISK (0–30)</option>
+      <option value="MEDIUM" {% if risk_filter == 'MEDIUM' %}selected{% endif %}>MEDIUM RISK (31–60)</option>
+      <option value="HIGH" {% if risk_filter == 'HIGH' %}selected{% endif %}>HIGH RISK (61–100)</option>
+    </select>
+
+    <button type="submit" class="btn btn-outline">
+      <i data-lucide="filter" class="lucide-sm"></i>
+      <span>Apply Filter</span>
+    </button>
+    {% if search or risk_filter %}
+    <a href="{{ url_for('history_page') }}" class="btn btn-ghost">Reset</a>
+    {% endif %}
+  </form>
+</div>
+
+<!-- History Table -->
+<div class="card mt-3">
+  {% if scans and scans|length > 0 %}
+  <div class="table-wrap">
+    <table class="data">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Submitted URL</th>
+          <th>Domain</th>
+          <th>Classification</th>
+          <th>Risk Tier</th>
+          <th>Risk Score</th>
+          <th>Scanned At</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in scans %}
+        <tr>
+          <td><span class="muted small">#{{ row.id }}</span></td>
+          <td>
+            <a href="{{ url_for('scanner_page') }}?url={{ row.url|urlencode }}" class="url-cell" title="{{ row.url }}">
+              {{ row.url }}
+            </a>
+          </td>
+          <td><code>{{ row.domain or 'N/A' }}</code></td>
+          <td><span class="badge {{ row.prediction }}">{{ row.prediction }}</span></td>
+          <td><span class="badge {{ row.risk_level }}">{{ row.risk_level }}</span></td>
+          <td><b>{{ row.risk_score }}</b><span class="muted small">/100</span></td>
+          <td class="muted small">{{ row.scanned_at|replace('T', ' ') }}</td>
+          <td style="text-align: right;">
+            <div style="display: inline-flex; gap: 6px;">
+              <a href="{{ url_for('download_scan_report', scan_id=row.id) }}" class="btn btn-outline btn-sm" target="_blank" title="Download Official PDF Report">
+                <i data-lucide="file-text" class="lucide-sm"></i>
+                <span>PDF</span>
+              </a>
+              <a href="{{ url_for('scanner_page') }}?url={{ row.url|urlencode }}" class="btn btn-ghost btn-sm" title="Re-scan and inspect details">
+                <i data-lucide="scan-search" class="lucide-sm"></i>
+                <span>View</span>
+              </a>
+              <button class="btn btn-ghost btn-sm delete-scan-btn" data-id="{{ row.id }}" title="Delete record" style="color: var(--maroon);">
+                <i data-lucide="x" class="lucide-sm"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  {% if total_pages > 1 %}
+  <div style="display: flex; justify-content: center; gap: 6px; margin-top: 20px; align-items: center;">
+    {% if page > 1 %}
+    <a href="{{ url_for('history_page', page=page-1, q=search, risk=risk_filter) }}" class="btn btn-outline btn-sm">&larr; Previous</a>
+    {% endif %}
+
+    {% for p in range(1, total_pages + 1) %}
+      {% if p == page %}
+      <span class="btn btn-primary btn-sm">{{ p }}</span>
+      {% elif p <= 3 or p >= total_pages - 2 or (p >= page - 1 and p <= page + 1) %}
+      <a href="{{ url_for('history_page', page=p, q=search, risk=risk_filter) }}" class="btn btn-outline btn-sm">{{ p }}</a>
+      {% elif p == 4 or p == total_pages - 3 %}
+      <span class="muted">&hellip;</span>
+      {% endif %}
+    {% endfor %}
+
+    {% if page < total_pages %}
+    <a href="{{ url_for('history_page', page=page+1, q=search, risk=risk_filter) }}" class="btn btn-outline btn-sm">Next &rarr;</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% else %}
+  <div style="text-align: center; padding: 48px 20px;">
+    <i data-lucide="history" style="width: 42px; height: 42px; color: var(--slate-muted); margin-bottom: 12px;"></i>
+    <h3>No Historical Scans Found</h3>
+    <p class="muted">
+      {% if search or risk_filter %}
+        No scanned records match your filter criteria. <a href="{{ url_for('history_page') }}">Clear filters</a>.
+      {% else %}
+        Your scan database is currently empty. Run scans in the <a href="{{ url_for('scanner_page') }}">URL Scanner</a>.
+      {% endif %}
+    </p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Modal Dialog: Confirm Clear History -->
+<div id="confirmModal" class="modal-bg" style="display: none; position: fixed; inset: 0; background: rgba(17, 24, 39, 0.6); z-index: 1000; align-items: center; justify-content: center;">
+  <div class="card modal" style="max-width: 440px; width: 90%;">
+    <h3 style="display: flex; align-items: center; gap: 8px; color: var(--maroon);">
+      <i data-lucide="triangle-alert"></i>
+      <span>Clear Scan History?</span>
+    </h3>
+    <p class="muted small" style="margin-top: 10px;">
+      This action will permanently purge all recorded URL scans, features, and threat scores from the local SQLite database. This action cannot be reversed.
+    </p>
+    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+      <button id="cancelModalBtn" class="btn btn-outline btn-sm">Cancel</button>
+      <button id="confirmClearBtn" class="btn btn-danger btn-sm">Yes, Clear All Records</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

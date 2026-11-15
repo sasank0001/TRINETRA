@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Live Threat Scanner - TRINETHRA{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="eyebrow">Real-Time Threat Analysis</div>
+    <h1>URL Scanner &amp; Threat Assessor</h1>
+    <p>Submit any website link to inspect lexical anomalies, brand impersonation, and machine learning risk index.</p>
+  </div>
+</div>
+
+<!-- Main Scan Card -->
+<div class="card scan-box">
+  <form id="scanForm" class="scan-form" autocomplete="off">
+    <div class="input-wrap">
+      <i data-lucide="search"></i>
+      <input
+        type="text"
+        id="urlInput"
+        class="input"
+        placeholder="Enter website link, e.g., https://secure-login.paypal.verify-auth.xyz"
+        value="{{ initial_url or '' }}"
+        required
+      />
+    </div>
+    <button type="submit" id="scanBtn" class="btn btn-primary btn-lg">
+      <i data-lucide="scan-search"></i>
+      <span>Scan URL</span>
+    </button>
+  </form>
+
+  <div class="form-hint">
+    <i data-lucide="shield-check" class="lucide-sm"></i>
+    <span>URLs are evaluated purely via lexical feature analysis. The application never opens, connects to, or downloads content from submitted links.</span>
+  </div>
+
+  <div class="examples">
+    <span class="muted small" style="margin-right: 4px; font-weight: 500;">Quick Test Samples:</span>
+    <span class="chip" data-url="https://www.google.com">Google (Safe)</span>
+    <span class="chip" data-url="https://github.com">GitHub (Safe)</span>
+    <span class="chip" data-url="https://www.wikipedia.org">Wikipedia (Safe)</span>
+    <span class="chip" data-url="http://paypal-security-verification.update-auth.xyz/login.php">PayPal Spoof (Phishing)</span>
+    <span class="chip" data-url="http://192.168.1.100/admin/secure/banking/update.php">IP Host (Phishing)</span>
+    <span class="chip" data-url="https://appleid.apple.com-verify-account.tk/signin">Apple Typosquat (High Risk)</span>
+  </div>
+</div>
+
+<!-- Scanning Progress Loader -->
+<div id="scanLoader" class="scan-loader">
+  <div class="scanner-progress-bar">
+    <div class="scanner-progress-inner"></div>
+  </div>
+  <h3 style="font-size: 1.1rem; margin-bottom: 4px;">Analyzing URL Security Posture</h3>
+  <p class="muted small" style="margin-bottom: 12px;">Evaluating 41 lexical attributes &amp; querying detection sub-engines...</p>
+  <ul class="loader-steps">
+    <li>Parsing URI schema, domain authority, and path tokens</li>
+    <li>Extracting structural entropy and brand mimicry indicators</li>
+    <li>Evaluating Random Forest ensemble decision paths</li>
+  </ul>
+</div>
+
+<!-- Dynamic Result Area -->
+<div id="scanResult" class="result">
+  {% if initial_result %}
+  <script id="initialScanResultData" type="application/json">
+    {{ initial_result|tojson }}
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const dataEl = document.getElementById("initialScanResultData");
+      if (dataEl && dataEl.textContent.trim()) {
+        try {
+          renderScanResult(JSON.parse(dataEl.textContent));
+        } catch (e) {
+          console.error("Failed to parse initial scan result", e);
+        }
+      }
+    });
+  </script>
+  {% endif %}
+</div>
+{% endblock %}

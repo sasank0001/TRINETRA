@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}TRINETHRA - Intelligent Phishing URL Detection & Cyber Protection System{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/logo.svg') }}?v={{ v }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ v }}">
+  <!-- Lucide Icons -->
+  <script src="{{ url_for('static', filename='js/vendor/lucide.min.js') }}"></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container">
+      <a href="{{ url_for('index') }}" class="brand">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}?v={{ v }}" alt="TRINETHRA Logo">
+        <div>
+          <span class="brand-name">TRINETHRA</span>
+          <span class="brand-tag">Cyber Protection System</span>
+        </div>
+      </a>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle Navigation">
+        <i data-lucide="menu"></i>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li>
+          <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">
+            <i data-lucide="shield-check"></i>
+            <span>Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('scanner_page') }}" class="{% if request.endpoint == 'scanner_page' %}active{% endif %}">
+            <i data-lucide="scan-search"></i>
+            <span>URL Scanner</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('dashboard_page') }}" class="{% if request.endpoint == 'dashboard_page' %}active{% endif %}">
+            <i data-lucide="chart-no-axes-combined"></i>
+            <span>Analytics</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('history_page') }}" class="{% if request.endpoint == 'history_page' %}active{% endif %}">
+            <i data-lucide="history"></i>
+            <span>Audit Log</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('about_page') }}" class="{% if request.endpoint == 'about_page' %}active{% endif %}">
+            <i data-lucide="file-text"></i>
+            <span>Architecture</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="foot-grid">
+        <div>
+          <a href="{{ url_for('index') }}" class="brand" style="margin-bottom: 8px;">
+            <img src="{{ url_for('static', filename='images/logo.svg') }}?v={{ v }}" alt="TRINETHRA Logo" style="width:30px;height:30px;">
+            <span class="brand-name" style="font-size: 1.15rem;">TRINETHRA</span>
+          </a>
+          <p>
+            An AI/ML-driven threat intelligence and lexical phishing URL detection system designed to inspect, analyze, and neutralize web fraud without executing outbound client connections.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="font-size: 0.9rem; margin-bottom: 12px; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.05em;">System Navigation</h4>
+          <ul class="foot-links">
+            <li><a href="{{ url_for('index') }}">Overview &amp; Telemetry</a></li>
+            <li><a href="{{ url_for('scanner_page') }}">Live Threat Scanner</a></li>
+            <li><a href="{{ url_for('dashboard_page') }}">Analytics Dashboard</a></li>
+            <li><a href="{{ url_for('history_page') }}">Compliance Audit Registry</a></li>
+            <li><a href="{{ url_for('about_page') }}">System Architecture &amp; XAI</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Formal Brand & Academic Credit -->
+      <div class="credit-block">
+        <div class="tagline">Ancient Vision. Intelligent Protection. A Safer Digital Tomorrow.</div>
+        <div class="author">Developed by CSE and IT Students – S7</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}?v={{ v }}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.lucide && typeof lucide.createIcons === "function") {
+        lucide.createIcons();
+      }
+    });
+  </script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

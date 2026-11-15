@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="trinethraLogoTitle">
+  <title id="trinethraLogoTitle">TRINETHRA - The Shiva Tripundra and Central Third Eye Emblem</title>
+  <!-- Classical Tripundra: Three Horizontal Curved Namam Bands in Traditional Maroon (#7A263A) -->
+  <g fill="none" stroke="#7A263A" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Top bar (left & right) -->
+    <path d="M 14 45 Q 31 39 46 37"/>
+    <path d="M 74 37 Q 89 39 106 45"/>
+    <!-- Middle bar (left & right) -->
+    <path d="M 14 60 Q 30 55 43 54"/>
+    <path d="M 77 54 Q 90 55 106 60"/>
+    <!-- Bottom bar (left & right) -->
+    <path d="M 14 75 Q 31 69 46 67"/>
+    <path d="M 74 67 Q 89 69 106 75"/>
+  </g>
+  <!-- Vertical Third Eye in Deep Navy (#111827) with Pure White Cavity -->
+  <path d="M60 18 C77 38 77 82 60 102 C43 82 43 38 60 18 Z" fill="#FFFFFF" stroke="#111827" stroke-width="5" stroke-linejoin="round"/>
+  <!-- Iris: Traditional Maroon (#7A263A) -->
+  <circle cx="60" cy="60" r="10.5" fill="#7A263A"/>
+  <!-- Pupil Ring: Crisp White ring with transparent center -->
+  <circle cx="60" cy="60" r="4.5" fill="#FFFFFF"/>
+  <!-- Central Vision Focus -->
+  <circle cx="60" cy="60" r="2.2" fill="#111827"/>
+  <!-- Bindu: Traditional Maroon dot (#7A263A) -->
+  <circle cx="60" cy="9" r="3.4" fill="#7A263A"/>
+</svg>
