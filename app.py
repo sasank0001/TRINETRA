@@ -43,8 +43,14 @@ from scanner import (
     scanner,
 )
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Application Factory / Initialization
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_folder=os.path.join(BASE_DIR, "static"),
+    template_folder=os.path.join(BASE_DIR, "templates"),
+)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "trinetra-cyber-protection-key-2026")
 app.config["JSON_SORT_KEYS"] = False
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
