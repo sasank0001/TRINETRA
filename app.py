@@ -79,6 +79,8 @@ def add_no_cache_headers(response):
 # ---------------------------------------------------------------------------
 
 @app.route("/")
+@app.route("/api/index")
+@app.route("/api/index/")
 def index():
     """Home Page - High-level overview, statistics overview, and CTA."""
     stats = get_stats()
